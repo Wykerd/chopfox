@@ -79,7 +79,7 @@ namespace chopfox {
         int panel_thickness = 2
     );
 
-    TiXmlDocument simple_xml_info (struct SimpleComicData* data, bool include_text);
+    TiXmlDocument simple_xml_info (struct SimpleComicData* data, bool include_text, bool include_contour = true);
 }
 
 #endif
