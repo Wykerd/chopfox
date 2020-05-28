@@ -136,10 +136,8 @@ namespace chopfox {
 
             ocr.SetImage(txt_im.data, txt_im.cols, txt_im.rows, txt_im.channels(), txt_im.step); // Load the image
             ocr.SetSourceResolution(ppi); // Set the ppi
-
-            std::string text(ocr.GetUTF8Text()); // get the text
             
-            block.text = text;
+            block.text = ocr.GetUTF8Text(); // get the text
 
             text_blocks.push_back(block);
 

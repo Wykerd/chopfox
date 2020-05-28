@@ -33,7 +33,11 @@ int main (int argc, char** argv) {
 
     SimpleComicData data;
 
-    simple_process_mat(proc, img, &data);
+    simple_process_panels(proc, img, &data);
+
+    simple_process_chop(proc, img, &data);
+
+    simple_process_text(proc, img, &data);
 
     char* debug_file = getCmdOption(argv, argv+argc, "--debug_file");
 
@@ -47,13 +51,13 @@ int main (int argc, char** argv) {
 
     img.release();
 
-    char* xml_file = getCmdOption(argv, argv+argc, "--xml");
+    char* xml_file = getCmdOption(argv, argv+argc, "--info_file");
 
     if (xml_file) {
-        simple_xml_save(&data, xml_file);
+        simple_xml_info(&data, true).SaveFile(std::string(xml_file));
     }
 
-    char* output_format = getCmdOption(argv, argv+argc, "--chop");
+    char* output_format = getCmdOption(argv, argv+argc, "--chop_output");
 
     if (output_format) {
         for (int i = 0; i < data.frames.size(); i++) {

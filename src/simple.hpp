@@ -3,6 +3,7 @@
 
 #include "text_detect.hpp"
 #include "extract.hpp"
+#include <tinyxml.h>
 
 namespace chopfox {
     struct SimpleComicData {
@@ -17,6 +18,7 @@ namespace chopfox {
         float text_score_thresh;
         int image_ppi;
         uint8_t log_level;
+        double panel_precision;
     };
 
     struct SimpleProcessor* simple_processor_init (
@@ -24,6 +26,7 @@ namespace chopfox {
         uint8_t log_level = 0,
         const char* lang = "eng",
         float text_score_thresh = 0.4f,
+        double panel_precision = 0.001,
         int image_ppi = 300
     );
 
@@ -32,10 +35,31 @@ namespace chopfox {
         uint8_t log_level = 0,
         const char* lang = "eng",
         float text_score_thresh = 0.4f,
+        double panel_precision = 0.001,
         int image_ppi = 300
     );
 
-    void simple_process_mat (
+    struct SimpleProcessor* simple_processor_init_notext (
+        uint8_t log_level = 0,
+        const char* lang = "eng",
+        float text_score_thresh = 0.4f,
+        double panel_precision = 0.001,
+        int image_ppi = 300
+    );
+
+    void simple_process_panels (
+        struct SimpleProcessor* proc, 
+        cv::Mat img,
+        struct SimpleComicData* out
+    );
+
+    void simple_process_chop (
+        struct SimpleProcessor* proc, 
+        cv::Mat img,
+        struct SimpleComicData* out
+    );
+
+    void simple_process_text (
         struct SimpleProcessor* proc, 
         cv::Mat img,
         struct SimpleComicData* out
@@ -55,7 +79,7 @@ namespace chopfox {
         int panel_thickness = 2
     );
 
-    void simple_xml_save (struct SimpleComicData* data, const char* filename);
+    TiXmlDocument simple_xml_info (struct SimpleComicData* data, bool include_text);
 }
 
 #endif

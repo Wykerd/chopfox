@@ -1,7 +1,10 @@
 #include "extract.hpp"
+#include <assert.h>
 
 namespace chopfox {
     PanelArray get_panels_rgb (cv::Mat img, double precision) {
+        assert(!img.empty());
+
         cv::Mat gray, lapl, thresh, dilated;
         
         cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
@@ -51,6 +54,8 @@ namespace chopfox {
     }
 
     void draw_panel_countours (PanelArray panels, cv::Mat dst, cv::Scalar color, int thickness) {
+        assert(!dst.empty());
+
         std::vector<std::vector<cv::Point>> contours;
         for (auto &panel : panels) {
             contours.push_back(panel.contour);
@@ -77,6 +82,8 @@ namespace chopfox {
     }
 
     std::vector<cv::Mat> crop_frames (cv::Mat src, PanelArray panels) {
+        assert(!src.empty());
+
         std::vector<cv::Mat> retVal;
         for (auto &panel : panels) {
             cv::Mat crop = src(panel.bounding_box);
@@ -93,6 +100,8 @@ namespace chopfox {
     }
 
     void draw_panel_bounds (PanelArray panels, cv::Mat dst, cv::Scalar color, int thickness) {
+        assert(!dst.empty());
+
         for (auto &panel : panels) {
             cv::rectangle(dst, panel.bounding_box, color, thickness);
         }

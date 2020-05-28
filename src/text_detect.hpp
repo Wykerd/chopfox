@@ -7,7 +7,7 @@
 namespace chopfox {
     struct TextBlock {
         cv::Rect bounding_box;
-        std::string text;
+        char* text;
     };
 
     std::vector<struct TextBlock> transcribe (

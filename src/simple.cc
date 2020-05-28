@@ -1,6 +1,6 @@
 #include "simple.hpp"
 #include <stdio.h>
-#include <tinyxml.h>
+#include <assert.h>
 
 namespace chopfox {
     struct SimpleProcessor* simple_processor_init (
@@ -8,9 +8,10 @@ namespace chopfox {
         uint8_t log_level,
         const char* lang,
         float text_score_thresh,
+        double panel_precision,
         int image_ppi 
     ) {
-        return simple_processor_init(cv::dnn::readNet(east_model_path), log_level, lang, text_score_thresh, image_ppi);
+        return simple_processor_init(cv::dnn::readNet(east_model_path), log_level, lang, text_score_thresh, panel_precision, image_ppi);
     }
 
     struct SimpleProcessor* simple_processor_init (
@@ -18,29 +19,59 @@ namespace chopfox {
         uint8_t log_level,
         const char* lang,
         float text_score_thresh,
+        double panel_precision,
         int image_ppi
     ) {
-        struct SimpleProcessor* ptr = new struct SimpleProcessor;
+        struct SimpleProcessor* ptr = simple_processor_init_notext(log_level, lang, text_score_thresh, panel_precision, image_ppi);
 
         ptr->text_detector = text_detector;
-        ptr->text_lang = lang;
-        ptr->text_score_thresh = text_score_thresh;
-        ptr->image_ppi = image_ppi;
-        ptr->log_level = log_level;
 
         return ptr;
     }
 
-    void simple_process_mat (
+    struct SimpleProcessor* simple_processor_init_notext (
+        uint8_t log_level,
+        const char* lang,
+        float text_score_thresh,
+        double panel_precision,
+        int image_ppi
+    ) {
+        struct SimpleProcessor* ptr = new struct SimpleProcessor;
+
+        ptr->text_lang = lang;
+        ptr->text_score_thresh = text_score_thresh;
+        ptr->image_ppi = image_ppi;
+        ptr->log_level = log_level;
+        ptr->panel_precision = panel_precision;
+
+        return ptr;
+    }
+
+    void simple_process_panels (
         struct SimpleProcessor* proc, 
         cv::Mat img,
         struct SimpleComicData* out
     ) {
-        out->panels = get_panels_rgb(img);
+        out->panels = get_panels_rgb(img, proc->panel_precision);
 
-        if (proc->log_level >= 1) printf("[Chopfox] Found %d frames\n", out->panels.size());
+        if (proc->log_level >= 1) printf("[Chopfox] Found %d panels\n", out->panels.size());
+    }
 
+    void simple_process_chop (
+        struct SimpleProcessor* proc, 
+        cv::Mat img,
+        struct SimpleComicData* out
+    ) {
         out->frames = crop_frames(img, out->panels);
+        if (proc->log_level >= 1) printf("[Chopfox] Chopped up panels...\n");
+    }
+
+    void simple_process_text (
+        struct SimpleProcessor* proc, 
+        cv::Mat img,
+        struct SimpleComicData* out
+    ) {
+        assert(!proc->text_detector.empty());
 
         if (proc->log_level >= 1) printf("[Chopfox] Trascribing...\n");
 
@@ -83,7 +114,7 @@ namespace chopfox {
         }
     }
 
-    void simple_xml_save (struct SimpleComicData* data, const char* filename) {
+    TiXmlDocument simple_xml_info (struct SimpleComicData* data, bool include_text) {
         TiXmlDocument doc;
         TiXmlDeclaration decl("1.0", "", "" );
         doc.InsertEndChild(decl);
@@ -94,19 +125,21 @@ namespace chopfox {
             panel.SetAttribute("left", data->panels[i].bounding_box.y);
             panel.SetAttribute("width", data->panels[i].bounding_box.width);
             panel.SetAttribute("height", data->panels[i].bounding_box.height);
-            for (auto &text : data->dialogue[i]) {
-                TiXmlElement dialogue("dialogue");
-                dialogue.SetAttribute("top", text.bounding_box.x);
-                dialogue.SetAttribute("left", text.bounding_box.y);
-                dialogue.SetAttribute("width", text.bounding_box.width);
-                dialogue.SetAttribute("height", text.bounding_box.height);
-                TiXmlText dialogue_text(text.text.c_str());
-                dialogue.InsertEndChild(dialogue_text);
-                panel.InsertEndChild(dialogue);
+            if (include_text) {
+                for (auto &text : data->dialogue[i]) {
+                    TiXmlElement dialogue("dialogue");
+                    dialogue.SetAttribute("top", text.bounding_box.x);
+                    dialogue.SetAttribute("left", text.bounding_box.y);
+                    dialogue.SetAttribute("width", text.bounding_box.width);
+                    dialogue.SetAttribute("height", text.bounding_box.height);
+                    TiXmlText dialogue_text(text.text);
+                    dialogue.InsertEndChild(dialogue_text);
+                    panel.InsertEndChild(dialogue);
+                }
             }
             root.InsertEndChild(panel);
         }
         doc.InsertEndChild(root);
-        doc.SaveFile(filename);
+        return doc;
     }
 }
