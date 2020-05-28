@@ -1,0 +1,15 @@
+# VSCode config
+.vscode/
+# Test
+test_imgs/
+python_tests/
+frozen_east_text_detection.pb
+# Bin
+out/
+build/
+
+*.out
+*.png
+*.jpg
+*.webp
+*.o
