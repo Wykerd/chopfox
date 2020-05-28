@@ -111,6 +111,7 @@ namespace chopfox {
         cv::Mat close_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(blob_w,blob_w)); // blob_w is nice size for the kernel ?
         cv::morphologyEx(text_mask, text_regions, cv::MORPH_CLOSE, close_kernel);
 
+        close_kernel.release();
         text_mask.release();
         
         std::vector<std::vector<cv::Point>> contours;

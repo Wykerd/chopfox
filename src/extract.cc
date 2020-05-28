@@ -2,7 +2,7 @@
 
 namespace chopfox {
     PanelArray get_panels_rgb (cv::Mat img, double precision) {
-        cv::Mat gray, lapl, thresh;
+        cv::Mat gray, lapl, thresh, dilated;
         
         cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
 
@@ -10,11 +10,17 @@ namespace chopfox {
 
         cv::threshold(lapl, thresh, 50, 255, cv::THRESH_BINARY);
 
+        // Close some small imperfections in the countours
+        cv::Mat dilation_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2,2));
+        cv::dilate(thresh, dilated, dilation_kernel);
+
+        dilation_kernel.release();
+
         std::vector<std::vector<cv::Point>> contours;
 
         PanelArray retVal;
 
-        cv::findContours(thresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        cv::findContours(dilated, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
         for (auto &contour : contours) {
             std::vector<cv::Point> approx;
@@ -30,6 +36,7 @@ namespace chopfox {
             }
         }
 
+        dilated.release();
         thresh.release();
         lapl.release();
         gray.release();

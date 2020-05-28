@@ -85,6 +85,8 @@ namespace chopfox {
 
     void simple_xml_save (struct SimpleComicData* data, const char* filename) {
         TiXmlDocument doc;
+        TiXmlDeclaration decl("1.0", "", "" );
+        doc.InsertEndChild(decl);
         TiXmlElement root("comic-strip");
         for (int i = 0; i < data->panels.size(); i++) {
             TiXmlElement panel("panel");
