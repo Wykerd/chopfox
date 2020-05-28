@@ -14,7 +14,7 @@ namespace chopfox {
         cv::threshold(lapl, thresh, 50, 255, cv::THRESH_BINARY);
 
         // Close some small imperfections in the countours
-        cv::Mat dilation_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2,2));
+        cv::Mat dilation_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
         cv::dilate(thresh, dilated, dilation_kernel);
 
         dilation_kernel.release();
@@ -30,7 +30,7 @@ namespace chopfox {
             double epsilon = precision * cv::arcLength(contour, true);
             cv::approxPolyDP(contour, approx, epsilon, true);
             double area = cv::contourArea(contour);
-            double min_area = (img.size().height / 20.0) * (img.size().width / 20.0);
+            double min_area = (img.size().height / 15.0) * (img.size().width / 15.0);
             if (area > min_area) {
                 struct PanelInfo info;
                 info.contour = approx;
