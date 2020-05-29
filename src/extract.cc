@@ -1,3 +1,20 @@
+/**
+ *  This file is part of Chopfox.
+ *
+ *  Chopfox is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Chopfox is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Chopfox.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "extract.hpp"
 #include <assert.h>
 
@@ -86,14 +103,31 @@ namespace chopfox {
 
         std::vector<cv::Mat> retVal;
         for (auto &panel : panels) {
+            // Create the Mats we're gonna use
             cv::Mat crop = src(panel.bounding_box);
             cv::Mat mask(crop.size(), CV_8UC1, cv::Scalar(0));
             cv::Mat isolated;
+
+            // Create the cropping mask
             std::vector<std::vector<cv::Point>> contours = { panel.contour };
             cv::fillPoly(mask, contours, 255, 8, 0, cv::Point(-panel.bounding_box.x, -panel.bounding_box.y));
-            crop.copyTo(isolated, mask);
+            
+            // Remove the dilation added by the extraction process
+            // NOTE: This isn't working well on straight edges... Look for better solution.
+            cv::Mat eroded;
+            cv::Mat erode_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
+            cv::erode(mask, eroded, erode_kernel);
+            erode_kernel.release();
+
+            // Crop the image
+            crop.copyTo(isolated, eroded);
+
+            // Release the data
             crop.release();
             mask.release();
+            eroded.release();
+
+            // Add to return vector
             retVal.push_back(isolated);
         }
         return retVal;
