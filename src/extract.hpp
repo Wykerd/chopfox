@@ -81,14 +81,6 @@ namespace chopfox {
     void draw_panel_bounds (PanelArray panels, cv::Mat dst, cv::Scalar color = cv::Scalar(255,255,0), int thickness = 2);
 
     /**
-     * Generate a mask of the panels
-     * @param panels The panels vector to draw to the mask
-     * @param size The size of the mask
-     * @returns The mask Mat
-     */
-    cv::Mat draw_full_mask (PanelArray panels, cv::Size size);
-
-    /**
      * Draw panel contours
      * @param panels The panels to draw
      * @param dst The opencv Mat to draw to

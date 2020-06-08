@@ -70,28 +70,6 @@ namespace chopfox {
         }
     }
 
-    void draw_panel_countours (PanelArray panels, cv::Mat dst, cv::Scalar color, int thickness) {
-        assert(!dst.empty());
-
-        std::vector<std::vector<cv::Point>> contours;
-        for (auto &panel : panels) {
-            contours.push_back(panel.contour);
-        }
-        cv::drawContours(dst, contours, -1, color, thickness);
-    }
-
-    cv::Mat draw_full_mask (PanelArray panels, cv::Size size) {
-        cv::Mat mask(size, CV_8UC1, cv::Scalar(0));
-
-        std::vector<std::vector<cv::Point>> contours;
-        for (auto &panel : panels) {
-            contours.push_back(panel.contour);
-        }
-        cv::fillPoly(mask, contours, 255);
-
-        return mask;
-    }
-
     void free_mat_vector (std::vector<cv::Mat> arr) {
         for (auto &i : arr) {
             i.release();
