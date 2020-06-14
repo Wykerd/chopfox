@@ -1,6 +1,8 @@
 # Chopfox
 
-A C++ library and CLI for extracting information from comic strips using OpenCV and Tesseract
+A library for extracting information from comic strips using OpenCV and Tesseract, written in both C++ and Javascript.
+
+The C++ version also provides a CLI.
 
 # Features
 
@@ -13,6 +15,8 @@ A C++ library and CLI for extracting information from comic strips using OpenCV 
 # CURRENTLY A WORK IN PROGRESS
 
 Check back later for full build instructions and documentation
+
+# Building
 
 # License
 

@@ -37,14 +37,14 @@ int main (int argc, char** argv) {
     char* input_file = getCmdOption(argv, argv+argc, "--input");
 
     if (!input_file) {
-        printf("Error: No input file specified\n");
+        printf("Chopfox-CLI Error: No input file specified\n");
         return 1;
     }
 
     cv::Mat img = cv::imread(input_file, cv::IMREAD_COLOR);
 
     if (img.empty()) {
-        printf("Error: Invalid input image\n");
+        printf("Chopfox-CLI Error: Invalid input image\n");
         return 1;
     }
 

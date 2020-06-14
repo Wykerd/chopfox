@@ -79,15 +79,6 @@ namespace chopfox {
      * @param thickness The thickness of the lines to draw
      */
     void draw_panel_bounds (PanelArray panels, cv::Mat dst, cv::Scalar color = cv::Scalar(255,255,0), int thickness = 2);
-
-    /**
-     * Draw panel contours
-     * @param panels The panels to draw
-     * @param dst The opencv Mat to draw to
-     * @param color The color of the box
-     * @param thickness The thickness of the lines to draw
-     */
-    void draw_panel_countours (PanelArray panels, cv::Mat dst, cv::Scalar color = cv::Scalar(255,255,0), int thickness = 2);
 }
 
 #endif

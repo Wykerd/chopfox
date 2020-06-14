@@ -13,3 +13,8 @@ build/
 *.jpg
 *.webp
 *.o
+
+# Web assets
+node_modules/
+web_build/
+web/cv/

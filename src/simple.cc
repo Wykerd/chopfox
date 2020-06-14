@@ -39,8 +39,11 @@ namespace chopfox {
         double panel_precision,
         int image_ppi
     ) {
-        struct SimpleProcessor* ptr = simple_processor_init_notext(log_level, lang, text_score_thresh, panel_precision, image_ppi);
+        struct SimpleProcessor* ptr = simple_processor_init_notext(log_level, panel_precision);
 
+        ptr->image_ppi = image_ppi;
+        ptr->text_lang = lang;
+        ptr->text_score_thresh = text_score_thresh;
         ptr->text_detector = text_detector;
 
         return ptr;
@@ -48,16 +51,10 @@ namespace chopfox {
 
     struct SimpleProcessor* simple_processor_init_notext (
         uint8_t log_level,
-        const char* lang,
-        float text_score_thresh,
-        double panel_precision,
-        int image_ppi
+        double panel_precision
     ) {
         struct SimpleProcessor* ptr = new struct SimpleProcessor;
 
-        ptr->text_lang = lang;
-        ptr->text_score_thresh = text_score_thresh;
-        ptr->image_ppi = image_ppi;
         ptr->log_level = log_level;
         ptr->panel_precision = panel_precision;
 

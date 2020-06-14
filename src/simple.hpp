@@ -79,18 +79,12 @@ namespace chopfox {
     /**
      * Create a new SimpleProcessor structure.
      * @param log_level Value between 0-3 for logging to stdout
-     * @param lang The language to use for tesseract-ocr
-     * @param text_score_thresh Threshold for minimum convidence of text detected
      * @param panel_precision Used in contour appoximation
-     * @param image_ppi Used for tesseract-ocr
-     * @returns The SimpleProcessor containing the EAST model and processing parameters
+     * @returns The SimpleProcessor
      */
     struct SimpleProcessor* simple_processor_init_notext (
         uint8_t log_level = 0,
-        const char* lang = "eng",
-        float text_score_thresh = 0.4f,
-        double panel_precision = 0.001,
-        int image_ppi = 300
+        double panel_precision = 0.001
     );
 
     /**
@@ -158,7 +152,7 @@ namespace chopfox {
     );
 
     /**
-     * Generate XML representation fo the data
+     * Generate XML representation of the data
      * @param include_text Include the text processed in the XML output
      * @param include_contour Include the contour points of the panels in the XML output
      * @returns The resulting TinyXML document

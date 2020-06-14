@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chopfox Web</title>
+</head>
+<body>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        main div {
+            display: flex;
+        }
+        section#input {
+            width: 30%;
+            background-color: #EB5160;
+            padding: 20px;
+        }
+        canvas#input_img {
+            max-width: 100%;
+            padding-top: 20px;
+        }
+        canvas.panel {
+            max-width: calc(100% - 22px);
+            margin: 10px;
+        }
+        canvas.panel:hover {
+            outline: red dashed 5px;
+        }
+        section#output {
+            flex-grow: 1;
+            background-color: #F7C59F;
+            padding: 10px;
+        }
+        h1, h2 {
+            text-align: center;
+            margin: 0;
+            color: #AEE5D8
+        }
+        h1 {
+            padding-top: 20px
+        }
+        h2 {
+            font-weight: normal;
+            padding-bottom: 20px
+        }
+        header {
+            background-color: #294C60;
+        }
+    </style>
+    <main>
+        <header>
+            <h1>Chopfox Web Demo</h1>
+            <h2>Client-side comic chopper</h2>
+        </header>
+        <div>
+            <section id="input">
+                <input type="file" accept="image/*" />
+                <canvas id="input_img" width="0" height="0"></canvas>
+            </section>
+            <section id="output">
+                <div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="./opencv_js.js"></script>
+</body>
+</html>
