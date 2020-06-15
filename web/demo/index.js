@@ -22,10 +22,32 @@ import cv from 'opencv'
 
 import { simple_load_image, simple_processor_init_notext, SimpleComicData, simple_process_panels, simple_process_chop } from '../src'
 
+const proc = simple_processor_init_notext(3, 0.001, 15);
+
+let img;
+
 window.onload = async () => {
     window.cv = await cv();
 
     document.querySelector('input[type=file]').addEventListener('change', handle_img_change);
+    document.querySelector('input#panel_prec').addEventListener('change', handle_change_prec);
+    document.querySelector('input#panel_area').addEventListener('change', handle_change_area);
+}
+
+function handle_change_area (e) {
+    e.preventDefault();
+    const val = parseFloat(e.target.value);
+    if (Number.isNaN(val)) e.target.value = '15';
+    proc.panel_min_area_divider = val;
+    extract_frames(img);
+}
+
+function handle_change_prec (e) {
+    e.preventDefault();
+    const val = parseFloat(e.target.value);
+    if (Number.isNaN(val)) e.target.value = '0.001';
+    proc.panel_precision = val;
+    extract_frames(img);
 }
 
 function handle_img_change (e) {
@@ -34,7 +56,7 @@ function handle_img_change (e) {
     const reader = new FileReader();
   
     reader.onloadend = async function () {
-        const img = await simple_load_image(reader.result);
+        img = await simple_load_image(reader.result);
         window.cv.imshow('input_img', img);
         extract_frames(img);
     }
@@ -47,8 +69,6 @@ function handle_img_change (e) {
 }
 
 function extract_frames(img) {
-    const proc = simple_processor_init_notext(3, 0.001, 12);
-
     const data = new SimpleComicData();
 
     simple_process_panels(proc, img, data);

@@ -19,6 +19,10 @@
             width: 30%;
             background-color: #EB5160;
             padding: 20px;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            text-align: center;
         }
         canvas#input_img {
             max-width: 100%;
@@ -51,6 +55,10 @@
         header {
             background-color: #294C60;
         }
+        section#input input {
+            width: 80%;
+            margin: 12px 0;
+        }
     </style>
     <main>
         <header>
@@ -59,7 +67,13 @@
         </header>
         <div>
             <section id="input">
+                <span>Input comic strip</span>
                 <input type="file" accept="image/*" />
+                <span>Panel edge approximation</span>
+                <input type="number" id="panel_prec" min="0" max="1" step="0.001" value="0.001" />
+                <span>Panel min area threshold divider</span>
+                <span>[ min_area = (strip.width / divider) * (strip.height / divider) ]</span>
+                <input type="number" id="panel_area" min="1" step="1" value="15" />
                 <canvas id="input_img" width="0" height="0"></canvas>
             </section>
             <section id="output">
