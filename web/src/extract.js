@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with Chopfox.  If not, see <https://www.gnu.org/licenses/>.
  */
-export function get_panels_rgb (mat, precision = 0.001) {
+export function get_panels_rgb (mat, precision = 0.001, min_area_divider = 15.0) {
     if (mat.empty()) throw new Error('Cannot process empty Mat');
     
     const gray = new cv.Mat(), 
@@ -46,7 +46,7 @@ export function get_panels_rgb (mat, precision = 0.001) {
         const epsilon = precision * cv.arcLength(contour, true);
         cv.approxPolyDP(contour, approx, epsilon, true);
         const area = cv.contourArea(contour);
-        const min_area = (mat.size().height / 15.0) * (mat.size().width / 15.0);
+        const min_area = (mat.size().height / min_area_divider) * (mat.size().width / min_area_divider);
         if (area > min_area) {
             const info = {};
             info.contour = approx;

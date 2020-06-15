@@ -1,21 +1,15 @@
 // Really simple config file for webpack
 const webpack = require('webpack');
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, argv) => {
     const isEnvProduction = argv.mode === 'production';
 
-    const webConfig = {
+    const defaultConfig = {
         target: 'web',
         mode: isEnvProduction ? 'production' : 'development',
-        entry: [path.resolve(__dirname, './demo/demo.js')],
-        output: {
-            path: path.resolve(__dirname, '../web_build'),
-            filename: isEnvProduction ? '[name].[contenthash:8].js' : 'bundle.js',
-            chunkFilename: isEnvProduction ? '[name].[contenthash:8].chunk.js' : '[name].chunk.js',
-        },
         resolve: {
             extensions: [".js"]
         },
@@ -45,48 +39,68 @@ module.exports = (env, argv) => {
                             ]
                         }
                     }
-                },
-                {
-                    test: /\.(png|jpe?g)$/i,
-                    use: {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'assets',
-                            name: '[name].[contenthash:8].[ext]'
-                        }
-                    }
                 }
             ]
         },
+    }
+
+    const libPlugins = [
+        new CopyPlugin({
+            patterns: [
+                { from: './cv/opencv_js.wasm', to: '.' },
+                { from: './cv/opencv_js.js', to: '.' }
+            ]
+        }),
+        new webpack.ProgressPlugin(),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: isEnvProduction ? 'production' : 'development'
+        }),
+        new webpack.BannerPlugin('Copyright 2020 Daniel Wykerd\n'),
+        new webpack.DefinePlugin({
+            __COMMIT_HASH__: JSON.stringify(require('child_process')
+                .execSync('git rev-parse --short HEAD')
+                .toString().trim())
+        })
+    ]
+
+    const demoConfig = {
+        name: 'demo',
+        entry: [path.resolve(__dirname, './demo/index.js')],
+        output: {
+            path: path.resolve(__dirname, '../docs'),
+            filename: isEnvProduction ? '[name].[contenthash:8].js' : 'bundle.js',
+            chunkFilename: isEnvProduction ? '[name].[contenthash:8].chunk.js' : '[name].chunk.js',
+        },
         plugins: [
-            new CopyPlugin({
-                patterns: [
-                    { from: './cv/opencv_js.wasm', to: '.' },
-                    { from: './cv/opencv_js.js', to: '.' },
-                    { from: '../frozen_east_text_detection.pb', to: '.' }
-                ]
-            }),
-            new webpack.ProgressPlugin(),
-            new webpack.EnvironmentPlugin({
-                NODE_ENV: isEnvProduction ? 'production' : 'development'
-            }),
-            new webpack.BannerPlugin('Copyright 2020 Daniel Wykerd\n'),
+            ...libPlugins,
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, './demo/index.html'),
                 filename: 'index.html'
             })
-        ]
+        ],
+        ...defaultConfig
+    }
+
+    const webConfig = {
+        name: 'lib',
+        entry: [path.resolve(__dirname, './src/index.js')],
+        output: {
+            path: path.resolve(__dirname, '../web_build'),
+            filename: isEnvProduction ? 'chopfox.min.js' : 'chopfox.dev.js',
+            chunkFilename: isEnvProduction ? '[name].[contenthash:8].chunk.js' : '[name].chunk.js',
+        },
+        plugins: libPlugins,
+        devtool: 'source-map',
+        ...defaultConfig
     }
 
     if (!isEnvProduction) {
-        webConfig.devServer = {
-            contentBase: path.resolve(__dirname, 'dist'),
+        demoConfig.devServer = {
             port: 9000,
             historyApiFallback: true
         };
+        demoConfig.devtool = 'inline-source-map';
+    }
 
-        webConfig.devtool = 'inline-source-map';
-    } 
-
-    return webConfig;
+    return [webConfig, demoConfig];
 }

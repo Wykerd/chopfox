@@ -36,6 +36,7 @@ namespace chopfox {
         int image_ppi;
         uint8_t log_level;
         double panel_precision;
+        double panel_min_area_divider;
     };
 
     /**
@@ -46,6 +47,7 @@ namespace chopfox {
      * @param text_score_thresh Threshold for minimum convidence of text detected
      * @param panel_precision Used in contour appoximation
      * @param image_ppi Used for tesseract-ocr
+     * @param panel_min_area_divider Min area of panel calculates as min_area = (strip.width / panel_min_area_divider) * (strip.height / panel_min_area_divider)
      * @returns The SimpleProcessor containing the EAST model and processing parameters
      */
     struct SimpleProcessor* simple_processor_init (
@@ -54,7 +56,8 @@ namespace chopfox {
         const char* lang = "eng",
         float text_score_thresh = 0.4f,
         double panel_precision = 0.001,
-        int image_ppi = 300
+        int image_ppi = 300,
+        double panel_min_area_divider = 15.0
     );
 
     /**
@@ -65,6 +68,7 @@ namespace chopfox {
      * @param text_score_thresh Threshold for minimum convidence of text detected
      * @param panel_precision Used in contour appoximation
      * @param image_ppi Used for tesseract-ocr
+     * @param panel_min_area_divider Min area of panel calculates as min_area = (strip.width / panel_min_area_divider) * (strip.height / panel_min_area_divider)
      * @returns The SimpleProcessor containing the EAST model and processing parameters
      */
     struct SimpleProcessor* simple_processor_init (
@@ -73,18 +77,21 @@ namespace chopfox {
         const char* lang = "eng",
         float text_score_thresh = 0.4f,
         double panel_precision = 0.001,
-        int image_ppi = 300
+        int image_ppi = 300,
+        double panel_min_area_divider = 15.0
     );
 
     /**
      * Create a new SimpleProcessor structure.
      * @param log_level Value between 0-3 for logging to stdout
      * @param panel_precision Used in contour appoximation
+     * @param panel_min_area_divider Min area of panel calculates as min_area = (strip.width / panel_min_area_divider) * (strip.height / panel_min_area_divider)
      * @returns The SimpleProcessor
      */
     struct SimpleProcessor* simple_processor_init_notext (
         uint8_t log_level = 0,
-        double panel_precision = 0.001
+        double panel_precision = 0.001,
+        double panel_min_area_divider = 15.0
     );
 
     /**

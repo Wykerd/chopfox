@@ -23,21 +23,25 @@ SimpleComicData.prototype.frames = [];
 export function SimpleProcessor () {}
 SimpleProcessor.prototype.log_level = 0;
 SimpleProcessor.prototype.panel_precision = 0.001;
+SimpleProcessor.prototype.panel_min_area_divider = 15.0;
 
 /**
  * Create a new SimpleProcessor object.
  * @param {number} log_level Value between 0-3 for logging to stdout
  * @param {number} panel_precision Used in contour appoximation
+ * @param {number} panel_min_area_divider Min area of panel calculates as min_area = (strip.width / panel_min_area_divider) * (strip.height / panel_min_area_divider) 
  * @returns {SimpleProcessor} The SimpleProcessor
  */
 export function simple_processor_init_notext (
-    log_level, 
-    panel_precision
+    log_level = 0, 
+    panel_precision = 0.001,
+    panel_min_area_divider = 15.0
 ) {
     const ret = new SimpleProcessor();
 
     ret.log_level = log_level;
     ret.panel_precision = panel_precision;
+    ret.panel_min_area_divider = panel_min_area_divider;
 
     return ret;
 }
@@ -53,7 +57,7 @@ export function simple_process_panels (
     img,
     out
 ) {
-    out.panels = get_panels_rgb(img, proc.panel_precision);
+    out.panels = get_panels_rgb(img, proc.panel_precision, proc.panel_min_area_divider);
 
     if (proc.log_level >= 1) console.log(`[Chopfox] Found ${out.panels.length} panels\n`);
 }

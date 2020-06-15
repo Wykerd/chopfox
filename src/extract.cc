@@ -19,7 +19,7 @@
 #include <assert.h>
 
 namespace chopfox {
-    PanelArray get_panels_rgb (cv::Mat img, double precision) {
+    PanelArray get_panels_rgb (cv::Mat img, double precision, double min_area_divider) {
         assert(!img.empty());
 
         cv::Mat gray, lapl, thresh, dilated;
@@ -47,7 +47,7 @@ namespace chopfox {
             double epsilon = precision * cv::arcLength(contour, true);
             cv::approxPolyDP(contour, approx, epsilon, true);
             double area = cv::contourArea(contour);
-            double min_area = (img.size().height / 15.0) * (img.size().width / 15.0);
+            double min_area = (img.size().height / min_area_divider) * (img.size().width / min_area_divider);
             if (area > min_area) {
                 struct PanelInfo info;
                 info.contour = approx;

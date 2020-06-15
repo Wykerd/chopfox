@@ -43,9 +43,10 @@ namespace chopfox {
      * Extract the panel ROIs from the input image
      * @param img The input image to process
      * @param precision The accuracy of the approximated contour (lower is more precise)
+     * @param panel_min_area_divider Min area of panel calculates as min_area = (strip.width / panel_min_area_divider) * (strip.height / panel_min_area_divider)
      * @returns An vector containing the regoins of interest and contour for each panel
      */
-    PanelArray get_panels_rgb (cv::Mat img, double precision = 0.001);
+    PanelArray get_panels_rgb (cv::Mat img, double precision = 0.001, double min_area_divider = 15.0);
 
     /**
      * Sort the extracted panels into the order they appear

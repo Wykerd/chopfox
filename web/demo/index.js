@@ -20,7 +20,7 @@ import "regenerator-runtime/runtime";
 
 import cv from 'opencv'
 
-import { simple_load_image, simple_processor_init_notext, SimpleComicData, simple_process_panels, simple_process_chop } from '../src/simple'
+import { simple_load_image, simple_processor_init_notext, SimpleComicData, simple_process_panels, simple_process_chop } from '../src'
 
 window.onload = async () => {
     window.cv = await cv();
@@ -47,7 +47,7 @@ function handle_img_change (e) {
 }
 
 function extract_frames(img) {
-    const proc = simple_processor_init_notext();
+    const proc = simple_processor_init_notext(3, 0.001, 12);
 
     const data = new SimpleComicData();
 

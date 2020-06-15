@@ -26,9 +26,10 @@ namespace chopfox {
         const char* lang,
         float text_score_thresh,
         double panel_precision,
-        int image_ppi 
+        int image_ppi,
+        double panel_min_area_divider
     ) {
-        return simple_processor_init(cv::dnn::readNet(east_model_path), log_level, lang, text_score_thresh, panel_precision, image_ppi);
+        return simple_processor_init(cv::dnn::readNet(east_model_path), log_level, lang, text_score_thresh, panel_precision, image_ppi, panel_min_area_divider);
     }
 
     struct SimpleProcessor* simple_processor_init (
@@ -37,9 +38,10 @@ namespace chopfox {
         const char* lang,
         float text_score_thresh,
         double panel_precision,
-        int image_ppi
+        int image_ppi,
+        double panel_min_area_divider
     ) {
-        struct SimpleProcessor* ptr = simple_processor_init_notext(log_level, panel_precision);
+        struct SimpleProcessor* ptr = simple_processor_init_notext(log_level, panel_precision, panel_min_area_divider);
 
         ptr->image_ppi = image_ppi;
         ptr->text_lang = lang;
@@ -51,12 +53,14 @@ namespace chopfox {
 
     struct SimpleProcessor* simple_processor_init_notext (
         uint8_t log_level,
-        double panel_precision
+        double panel_precision,
+        double panel_min_area_divider
     ) {
         struct SimpleProcessor* ptr = new struct SimpleProcessor;
 
         ptr->log_level = log_level;
         ptr->panel_precision = panel_precision;
+        ptr->panel_min_area_divider = panel_min_area_divider;
 
         return ptr;
     }
@@ -66,7 +70,7 @@ namespace chopfox {
         cv::Mat img,
         struct SimpleComicData* out
     ) {
-        out->panels = get_panels_rgb(img, proc->panel_precision);
+        out->panels = get_panels_rgb(img, proc->panel_precision, proc->panel_min_area_divider);
 
         if (proc->log_level >= 1) printf("[Chopfox] Found %d panels\n", out->panels.size());
     }
