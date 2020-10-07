@@ -3,7 +3,7 @@
 # Test
 test_imgs/
 python_tests/
-frozen_east_text_detection.pb
+# frozen_east_text_detection.pb # redistribute this with the program
 # Bin
 out/
 build/

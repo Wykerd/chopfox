@@ -25,5 +25,5 @@
     "demo": "npx webpack-dev-server --config-name demo"
   },
   "author": "Daniel Wykerd",
-  "license": "GPL-3.0"
+  "license": "AGPL-3.0"
 }
