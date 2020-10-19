@@ -63,9 +63,20 @@ int main (int argc, char** argv) {
     if (debug_file) {
         cv::Mat im_debug = img.clone();
 
+        bool has_alpha = im_debug.channels() == 4;
+    
+        if (has_alpha) {
+            std::vector<cv::Mat> src_channels(4);
+            cv::split(im_debug, src_channels);
+            std::vector<cv::Mat> rgb(src_channels.begin(), src_channels.end() - 1);
+            cv::merge(rgb, im_debug);
+        };
+
         simple_draw_bounding_boxes(&data, im_debug);
 
         cv::imwrite(debug_file, im_debug);
+
+        im_debug.release();
     }
 
     img.release();
