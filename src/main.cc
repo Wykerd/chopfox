@@ -41,7 +41,7 @@ int main (int argc, char** argv) {
         return 1;
     }
 
-    cv::Mat img = cv::imread(input_file, cv::IMREAD_COLOR);
+    cv::Mat img = cv::imread(input_file, cv::IMREAD_UNCHANGED);
 
     if (img.empty()) {
         printf("Chopfox-CLI Error: Invalid input image\n");

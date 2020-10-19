@@ -67,14 +67,23 @@ namespace chopfox {
     }
 
     std::vector<struct TextBlock> transcribe (cv::Mat frame, cv::dnn::Net detector, float score_thresh, const char* lang, int ppi) {
-        cv::Mat blob;
+        cv::Mat blob, color;
 
-        int blob_w = frame.size().width / 32;
+        bool has_alpha = frame.channels() == 4;
+    
+        if (has_alpha) {
+            std::vector<cv::Mat> src_channels(4);
+            cv::split(frame, src_channels);
+            std::vector<cv::Mat> rgb(src_channels.begin(), src_channels.end() - 1);
+            cv::merge(rgb, color);
+        } else color = frame;
+
+        int blob_w = color.size().width / 32;
         if (blob_w <= 0) blob_w = 1;
-        int blob_h = frame.size().height / 32;
+        int blob_h = color.size().height / 32;
         if (blob_h <= 0) blob_h = 1;
 
-        cv::dnn::blobFromImage(frame, blob, 1.0, cv::Size(blob_w * 32,blob_h * 32), cv::Scalar(123.68, 116.78, 103.94), true, false);
+        cv::dnn::blobFromImage(color, blob, 1.0, cv::Size(blob_w * 32,blob_h * 32), cv::Scalar(123.68, 116.78, 103.94), true, false);
         detector.setInput(blob);
         std::vector<cv::Mat> outs;
         std::vector<cv::String> outNames(2);
@@ -96,9 +105,9 @@ namespace chopfox {
         std::vector<int> indices;
         cv::dnn::NMSBoxes(boxes, confidences, score_thresh, 0.8, indices);
 
-        cv::Point2f ratio((float)frame.cols / (blob_w * 32), (float)frame.rows / (blob_h * 32));
+        cv::Point2f ratio((float)color.cols / (blob_w * 32), (float)color.rows / (blob_h * 32));
         
-        cv::Mat text_mask(frame.size(), CV_8UC1, cv::Scalar(0));
+        cv::Mat text_mask(color.size(), CV_8UC1, cv::Scalar(0));
 
         // Generate mask of text
         for (size_t i = 0; i < indices.size(); ++i)
@@ -149,7 +158,7 @@ namespace chopfox {
             
             block.bounding_box = cv::boundingRect(contour);
 
-            cv::Mat txt_im = frame(block.bounding_box);
+            cv::Mat txt_im = color(block.bounding_box);
 
             ocr.SetImage(txt_im.data, txt_im.cols, txt_im.rows, txt_im.channels(), txt_im.step); // Load the image
             ocr.SetSourceResolution(ppi); // Set the ppi
