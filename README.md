@@ -1,5 +1,7 @@
 # Chopfox
 
+![Logo](chopfox.png)
+
 A library for extracting information from comic strips using OpenCV and Tesseract.
 
 # Features
